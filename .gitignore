@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.venv/
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+
+# Data files
+data/
+*.csv
+*.tsv
+*.json
+*.xml
+*.parquet
+
+# Model files
+models/
+*.h5
+*.hdf5
+*.ckpt
+*.pth
+*.pt
+
+# Experiment outputs
+experiments/
+*.log
+*.txt
+
+# Environment files
+.env
+
+# IDE configurations
+.vscode/
+.idea/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+logs/
+tmp/
+temp/
+*.tmp
+*.out
+
+# Machine learning tools
+mlruns/
+tensorboard/
+
+# Folders 
+archive/
+test/
