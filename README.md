@@ -317,7 +317,8 @@ Adjust test_size (e.g., test_size=0.3) to use 30% of the data for testing.
 ## 6. **Model Evaluation Summary**
 #### Evaluation Metrics:
 **Accuracy:** Used for classification.
+
 **Mean Squared Error (MSE):** Evaluated the linear regression model.
+
 **R² Score:** Measured the proportion of variance explained by the regression model.
----
 
