@@ -221,8 +221,103 @@ Finally, now that the model has been trained and evaluated, we can use it for pr
     y_pred_separate = loaded_model.predict(X_test_separate)
    ```
 
+## 5. **Other Models**
+### **Data Processing**
+**Place Raw CSV Files:** Add your raw flight data files into the unprocessed_data/ folder.
+**Run Processing Script:** Run the data_processing_other_models.py script for pre-processing:
+```bash
+python data_processing_other_models.py
+```
+**Import the Processed Dataset:**
+```python
+# Load your dataset (adjust the path as needed)
+df = pd.read_csv('processed_data/_non_cancelled_flights.csv')
+```
+#### 5.1 **Linear Regression Model**
+
+**Train and Save the Model**
+**Training:**
+```python
+X = df[['Airline', 'Origin', 'Destination', 'PlannedDepartHour', 'PlannedDepartMinute', 'DayOfYear', 'DayOfWeek','PlannedArriveMinute', 'PlannedArriveHour', 'AverageDepartDelay_Airline', 'AverageDepartDelay_DayOfYear', 'AverageDepartDelay_DayOfWeek', 'AverageDepartDelay_Origin']]
+y = df['ArriveDelayAmount']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train Linear Regression model
+pipeline = Pipeline(steps=[
+    ('preprocessor', preprocessor),
+    ('regressor', LinearRegression())
+])
+pipeline.fit(X_train, y_train)
+```
+**Saving the Model:**
+```python
+joblib.dump(pipeline, 'linear_regression_model.pkl')
+```
+#### 5.2 **Random Forest Classifier**
+**Train and Save the Model**
+**Define Categories**
+```python
+bins = [-float('inf'), 0, 15, 30, 60, float('inf')]
+labels = ['On-time', 'Small', 'Moderate', 'Large', 'Severe']
+df['DelayCategory'] = pd.cut(df['DepartDelayAmount'], bins=bins, labels=labels)
+```
+**Training:**
+```python
+X = df[['Airline', 'Origin', 'Destination', 'PlannedDepartHour', 'PlannedDepartMinute', 'DayOfYear', 'DayOfWeek','PlannedArriveMinute', 'PlannedArriveHour', 'AverageDepartDelay_Airline', 'AverageDepartDelay_DayOfYear', 'AverageDepartDelay_DayOfWeek', 'AverageDepartDelay_Origin']]
+y = df['DelayCategory']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train Random Forest model
+pipeline = Pipeline(steps=[
+    ('preprocessor', preprocessor),  # Apply preprocessing first
+    ('classifier', RandomForestClassifier(n_estimators=50, max_depth=10, n_jobs=-1, random_state=42, class_weight='balanced'))  # Then apply the Random Forest model
+])
+pipeline.fit(X_train, y_train)
+```
+**Saving the Model:**
+```python
+joblib.dump(pipeline, 'randomForest_classifier_model.pkl')
+```
+#### 5.3 **Parameters that Can Be Changed**
+**Save and Load Directory for Models:**
+
+**Save Directory:** You can specify where the trained models are saved by adjusting the file paths in the joblib.dump() functions. For example:
+```python
+joblib.dump(pipeline, 'models/linear_regression_model.pkl')  # Save Linear Regression model
+joblib.dump(pipeline, 'models/randomForest_classifier_model.pkl')  # Save Random Forest Classifier model
+```
+**Load Directory:** Similarly, to load models for predictions, update the path:
+```python
+loaded_model = joblib.load('models/linear_regression_model.pkl')
+```
+**Random Forest Model Depth:**
+
+To change the depth of the Random Forest Classifier:
+```python
+RandomForestClassifier(n_estimators=50, max_depth=10, n_jobs=-1, random_state=42, class_weight='balanced')
+```
+Modify max_depth to set the desired depth of the model (e.g., max_depth=15).
+
+**Number of Estimators (Random Forest):**
+
+To change the number of decision trees used by the Random Forest model:
+```python
+RandomForestClassifier(n_estimators=50, max_depth=10, n_jobs=-1, random_state=42, class_weight='balanced')
+```
+Adjust the n_estimators parameter (e.g., n_estimators=100) to control the number of trees in the forest.
+
+**Test Size:**
+
+Change the proportion of the dataset allocated for testing versus training:
+```python
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+```
+Adjust test_size (e.g., test_size=0.3) to use 30% of the data for testing.
+
+## 6. **Model Evaluation Summary**
+#### Evaluation Metrics:
+**Accuracy:** Used for classification.
+**Mean Squared Error (MSE):** Evaluated the linear regression model.
+**R² Score:** Measured the proportion of variance explained by the regression model.
 ---
 
-## **Conclusion**
-
-insert stuff here
