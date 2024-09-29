@@ -7,6 +7,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.metrics import mean_squared_error, r2_score
 import datetime
+import joblib
 #importing the dataframe from parameters script
 from parameters import non_cancelled_flights_df as df
 
@@ -105,6 +106,9 @@ print("Beginning model training")
 #train the model
 pipeline.fit(X_train, y_train)
 print("Finished training\n\n")
+
+# Save the model to disk
+joblib.dump(pipeline, 'linear_regression_model.pkl')
 
 #make predictions on the test set
 y_pred = pipeline.predict(X_test)

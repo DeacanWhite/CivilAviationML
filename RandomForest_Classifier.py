@@ -6,7 +6,7 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score, classification_report
-
+import joblib
 from parameters import non_cancelled_flights_df as df
 
 # Preprocess the data
@@ -79,8 +79,8 @@ df = df.dropna()
 
 
 
-# 20% Sample for testing training, MUST BE REMOVED
-df = df.sample(frac=0.2, random_state=42)  # 20% sample
+# 50% Sample for testing training,
+df = df.sample(frac=0.5, random_state=42)  # 50% sample
 
 
 
@@ -113,6 +113,9 @@ pipeline = Pipeline(steps=[
 # Train the model on the training data
 print("Training the Random Forest Classifier...")
 pipeline.fit(X_train, y_train)
+
+# Save the model to disk
+joblib.dump(pipeline, 'randomForest_classifier_model.pkl')
 
 # Make predictions on the test data
 print("Making predictions on the test data...")
