@@ -117,35 +117,19 @@ for filename in all_files:
         non_cancelled_flights.loc[mask_arrive, 'PlannedArriveTime'].apply(time_to_minutes)
     ).astype(int)
 
-    # Convert HH:MM back to total minutes and extract hours for both Planned and Actual times
-    for time_col in ['PlannedDepartTime', 'ActualDepartTime', 'PlannedArriveTime', 'ActualArriveTime']:
-        non_cancelled_flights[time_col + '_Minutes'] = non_cancelled_flights[time_col].apply(time_to_minutes)
-        non_cancelled_flights[time_col + '_Hour'] = non_cancelled_flights[time_col + '_Minutes'] // 60
-
-    non_cancelled_flights['PlannedDepartTime'] = non_cancelled_flights['PlannedDepartTime_Minutes']
-    non_cancelled_flights['ActualDepartTime'] = non_cancelled_flights['ActualDepartTime_Minutes']
-    non_cancelled_flights['PlannedArriveTime'] = non_cancelled_flights['PlannedArriveTime_Minutes']
-    non_cancelled_flights['ActualArriveTime'] = non_cancelled_flights['ActualArriveTime_Minutes']
-
-    # Drop the temporary columns to avoid duplicates
-    non_cancelled_flights.drop(columns=[col + '_Minutes' for col in ['PlannedDepartTime', 'ActualDepartTime', 'PlannedArriveTime', 'ActualArriveTime']], inplace=True)
-
     # End the timer for the data processing
     end_time = time.time()
     print(f"Time taken to process the dataset: {time_taken} seconds")
 
-    # Write non-cancelled flights DataFrame to a CSV file (full dataset)
-    # non_cancelled_flights.to_csv(os.path.join(export_directory, f'{name_without_extension}_non_cancelled_flights.csv'), index=False)
-
     # Randomly select n number of rows from non_cancelled_flights (adjsut n sumber to get more or less rows)
-    sampled_flights = non_cancelled_flights.sample(n=30000, random_state=42)
+    sampled_flights = non_cancelled_flights.sample(n=120000, random_state=42)
 
     # Write the sampled DataFrame to a CSV file
-    sampled_flights.to_csv(os.path.join(export_directory, f'{name_without_extension}_sampled_non_cancelled_flights.csv'), index=False)
+    sampled_flights.to_csv(os.path.join(export_directory, f'{name_without_extension}_non_cancelled_flights.csv'), index=False)
 
     # Write cancelled flights DataFrame to a CSV file
     cancelled_flights.to_csv(os.path.join(export_directory, f'{name_without_extension}_cancelled_flights.csv'), index=False)
-    
+
     ## Print the processed DataFrames and NaN counts
     print('\n')
     print(f'DataFrames for {filename}:')

@@ -11,7 +11,7 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.pipeline import Pipeline
 
 # Load your dataset (adjust the path as needed)
-df = pd.read_csv('processed_data/2012_sampled_non_cancelled_flights.csv')
+df = pd.read_csv('processed_data/combined_logistic_non_cancelled_flights.csv')
 
 # Define the target variable (Delayed or not)
 df['Delayed'] = df['ArriveDelayAmount'].apply(lambda x: 1 if x > 0 else 0)
@@ -33,7 +33,7 @@ preprocessor = ColumnTransformer(
 
 model_pipeline = Pipeline(steps=[
     ('preprocessor', preprocessor),
-    ('classifier', LogisticRegression(multi_class='multinomial', solver='lbfgs', C=0.0001))
+    ('classifier', LogisticRegression(multi_class='multinomial', solver='lbfgs', C=0.000001))
 ])
 
 # Train the model
@@ -77,7 +77,7 @@ plt.show()
 loaded_model = joblib.load('logistic_regression_model.pkl')
 
 # Load the separate test dataset
-df_test = pd.read_csv('processed_data/2017_sampled_non_cancelled_flights.csv')
+df_test = pd.read_csv('processed_data/2018_logistic_non_cancelled_flights.csv')
 
 # Preprocess the test dataset
 df_test['Delayed'] = df_test['ArriveDelayAmount'].apply(lambda x: 1 if x > 0 else 0)

@@ -3,7 +3,7 @@ import pandas as pd
 import glob
 
 # Path to the folder containing the CSV files
-path = 'test/*.csv'
+path = 'unprocessed_data/*.csv'
 
 # Get a list of all CSV files in the folder
 all_files = glob.glob(path)
