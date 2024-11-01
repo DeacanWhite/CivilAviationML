@@ -57,3 +57,4 @@ tensorboard/
 # Folders 
 archive/
 test/
+FastAPI/
