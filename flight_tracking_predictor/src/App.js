@@ -7,6 +7,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Charts from "./pages/Charts";
 import About from "./pages/About";
 import "./App.css";
+import Footer from "./components/Footer";
 import BackToTopButton from "./components/BackToTopButton";
 
 function Home() {
@@ -200,7 +201,14 @@ function App() {
 
   return (
     <Router>
-      <div>
+      <div
+        // Apply flexbox styles to the main container
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          minHeight: "100vh",
+      }}
+      >
         {/* Navigation Bar */}
         <AppBar position="static" sx={{ backgroundColor: "rgba(255, 255, 255, 0.9)", color: "black" }}>
           <Toolbar>
@@ -239,6 +247,10 @@ function App() {
 
         {/* Back to Top Button */}
         <BackToTopButton />
+
+        {/* Footer */}
+        <Footer />
+
       </div>
     </Router>
   );
