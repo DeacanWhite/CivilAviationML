@@ -35,29 +35,47 @@ function Home() {
   const handlePlannedDepartTimeChange = (e) => setPlannedDepartTime(e.target.value);
 
   // Function to fetch data from the API based on search parameters
-  /*
+  
   const handleSearch = async () => {
     try {
-      // Sends a POST request to the API endpoint with search criteria
-      const response = await axios.post("http://127.0.0.1:8000/predict", {
-        departure,
-        arrival,
-        date,
+      // Step 1: Submit the initial data
+      const submitResponse = await axios.post("http://127.0.0.1:8000/submit", {
         airline,
-        plannedDepartTime,
+        origin: departure,
+        destination: arrival,
+        flight_date: date,
+        planned_depart_time: plannedDepartTime.replace(":", ""), // Convert time to HHMM format without colon
       });
-
-      // Update flights state with the API response data
-      setFlights(response.data.flights); // Assumes API returns data in { flights: [...] } format
+  
+      const predictionId = submitResponse.data.id;
+  
+      // Step 2: Poll the result until processing is complete
+      let resultStatus = "processing";
+      while (resultStatus === "processing") {
+        const resultResponse = await axios.get(`http://127.0.0.1:8000/result/${predictionId}`);
+        resultStatus = resultResponse.data.status;
+  
+        if (resultStatus === "failed") {
+          console.error("Data processing failed.");
+          return;
+        }
+        
+        if (resultStatus === "prediction complete") {
+          setFlights([{ ...resultResponse.data.result, airline, date, plannedDepartTime }]);
+          break;
+        }
+  
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // Poll every second
+      }
     } catch (error) {
       console.error("Error fetching flight data:", error);
     }
   };
-  */
+  
 
   // Mock data to simulate an API response
   // Uncomment the code above to test the UI without the API
-
+/*
   const handleSearch = async () => {
       const mockResponse = {
         flights: [
@@ -97,7 +115,7 @@ function Home() {
         setFlights(mockResponse.flights);
       }, 1000); // 1-second delay to mimic API response time
     };
-
+*/
 
   return (
     <div>
@@ -119,8 +137,8 @@ function Home() {
               <FormControl fullWidth sx={{ flex: 1, minWidth: "120px" }}>
                 <InputLabel>Departure</InputLabel>
                 <Select value={departure} onChange={handleDepartureChange} label="Departure" aria-label="Select departure location">
-                  <MenuItem value="Sydney">Sydney</MenuItem>
-                  <MenuItem value="Melbourne">Melbourne</MenuItem>
+                  <MenuItem value="LAX">LAX</MenuItem>
+                  <MenuItem value="SAV">SAV</MenuItem>
                   <MenuItem value="Brisbane">Brisbane</MenuItem>
                   <MenuItem value="Perth">Perth</MenuItem>
                   <MenuItem value="Adelaide">Adelaide</MenuItem>
@@ -131,8 +149,8 @@ function Home() {
               <FormControl fullWidth sx={{ flex: 1, minWidth: "120px" }}>
                 <InputLabel>Arrival</InputLabel>
                 <Select value={arrival} onChange={handleArrivalChange} label="Arrival" aria-label="Select arrival location">
-                  <MenuItem value="Sydney">Sydney</MenuItem>
-                  <MenuItem value="Melbourne">Melbourne</MenuItem>
+                  <MenuItem value="LAX">LAX</MenuItem>
+                  <MenuItem value="SAV">SAV</MenuItem>
                   <MenuItem value="Brisbane">Brisbane</MenuItem>
                   <MenuItem value="Perth">Perth</MenuItem>
                   <MenuItem value="Adelaide">Adelaide</MenuItem>
@@ -146,8 +164,8 @@ function Home() {
               <FormControl fullWidth sx={{ flex: 1, minWidth: "120px" }}>
                 <InputLabel>Airline</InputLabel>
                 <Select value={airline} onChange={handleAirlineChange} label="Airline" aria-label="Select airline">
-                  <MenuItem value="Qantas">Qantas</MenuItem>
-                  <MenuItem value="JetStar">JetStar</MenuItem>
+                  <MenuItem value="B6">B6</MenuItem>
+                  <MenuItem value="US">US</MenuItem>
                   <MenuItem value="Virgin Australia">Virgin Australia</MenuItem>
                   <MenuItem value="Air New Zealand">Air New Zealand</MenuItem>
                 </Select>
