@@ -25,3 +25,6 @@ yarn-error.log*
 .vscode
 .idea
 *.swp
+
+# random test files and folders
+App_error_handling.js
