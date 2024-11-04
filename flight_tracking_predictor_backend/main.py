@@ -1,24 +1,29 @@
-# main.py
 from fastapi import FastAPI, HTTPException, Depends, Request, BackgroundTasks
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 import joblib
+import pandas as pd
 import datetime as dt
 import time
 import uuid
 
 app = FastAPI()
 
-logistic_model = joblib.load("./trained_models/logistic_regression_model.pkl")
-
-
+# Load the pre-trained model
+model_path = './trained_models/logistic_regression_model.pkl'
+try:
+    logistic_model = joblib.load(model_path)
+    print("Model loaded successfully.")
+except FileNotFoundError:
+    print(f"Error: Model file not found at {model_path}")
+    exit()
 
 class PredictionInput(BaseModel):
-    airline : str
-    origin : str
-    destination : str
-    date : dt.date
-
+    airline: str
+    origin: str
+    destination: str
+    flight_date: dt.date
+    planned_depart_time: str  # Expecting HHMM format
 
 data_store = {}
 
@@ -39,59 +44,78 @@ async def http_exception_handler(request: Request, exc: HTTPException):
 
 @app.post("/submit")
 async def submit_input_data(data: PredictionInput, background_tasks: BackgroundTasks):
-
     prediction_id = str(uuid.uuid4())
-
-    data_store[prediction_id] = {"data": data, "status": "processing"}
-
+    data_store[prediction_id] = {"data": data.dict(), "status": "processing"}
     background_tasks.add_task(process_data, prediction_id)
-
     return {"status": "data received, processing data", "id": prediction_id}
 
 async def process_data(prediction_id: str):
-
-    #input data processing for model input logic
     try:
+        raw_data = data_store[prediction_id]["data"]
+        user_input = {
+            'Airline': [raw_data['airline']],
+            'Origin': [raw_data['origin']],
+            'Destination': [raw_data['destination']],
+            'FlightDate': [raw_data['flight_date']],
+            'PlannedDepartTime': [raw_data['planned_depart_time']]
+        }
+        user_df = pd.DataFrame(user_input)
+        
+        # Process the date and time fields
+        user_df['FlightDate'] = pd.to_datetime(user_df['FlightDate'], errors='coerce')
+        user_df['DayOfWeek'] = user_df['FlightDate'].dt.dayofweek
+        user_df['Hour'] = pd.to_datetime(user_df['PlannedDepartTime'], format='%H%M', errors='coerce').dt.hour
+        
+        # Check for invalid date or time
+        if user_df[['DayOfWeek', 'Hour']].isna().any().any():
+            data_store[prediction_id]["status"] = "failed: invalid date or time format"
+            return
+        
+        # Store processed data
+        data_store[prediction_id]["processed_data"] = user_df[['Airline', 'Origin', 'Destination', 'DayOfWeek', 'Hour']].iloc[0].tolist()
         data_store[prediction_id]["status"] = "data processing complete"
-
     except Exception as e:
         data_store[prediction_id]["status"] = f"failed: {str(e)}"
 
-
-@app.post("/predict")
-async def predict_delay(data : PredictionInput):
+@app.post("/predict/{prediction_id}")
+async def predict_delay(prediction_id: str):
     try:
-        input_data = [[data.airline, data.origin, data.destination, data.date]]
-
-        prediction = logistic_model.predict(input_data)
-
-        return {"status": "success", "prediction": prediction[0]}
+        if prediction_id not in data_store:
+            raise HTTPException(status_code=404, detail="Prediction ID not found")
+        
+        if "processed_data" not in data_store[prediction_id]:
+            raise HTTPException(status_code=400, detail="Data not processed yet")
+        
+        processed_input = [data_store[prediction_id]["processed_data"]]
+        
+        # Predict delay probability
+        delay_prob = logistic_model.predict_proba(processed_input)[0][1]
+        
+        # Store prediction result
+        data_store[prediction_id]["status"] = "prediction complete"
+        data_store[prediction_id]["result"] = {"delay_probability": delay_prob}
+        
+        return {"status": "success", "prediction_id": prediction_id, "delay_probability": delay_prob}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"prediction failed: {str(e)}")
-    
+        raise HTTPException(status_code=500, detail=f"Prediction failed: {str(e)}")
 
 @app.get("/result/{prediction_id}")
 async def get_result(prediction_id: str):
     if prediction_id in data_store:
         return {"status": data_store[prediction_id]["status"], "result": data_store[prediction_id].get("result")}
     else:
-        raise HTTPException(status_code = 404, detail = "Result not found")
-    
+        raise HTTPException(status_code=404, detail="Result not found")
+
 @app.post("/trigger_visuals/")
 async def trigger_visuals(background_tasks: BackgroundTasks):
-
     background_tasks.add_task(generate_visuals)
     return {"status": "visualization triggered"}
 
 async def generate_visuals():
-
-    #visualization logic here
-
     try:
-        print("visuals")
+        print("Generating visuals...")
     except Exception as e:
         print(f"Visualization failed: {str(e)}")
-
 
 @app.get("/health")
 async def health_check():
