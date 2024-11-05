@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, Depends, Request, BackgroundTasks
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware  # Import CORSMiddleware
 from pydantic import BaseModel
 import joblib
 import pandas as pd
@@ -8,6 +9,15 @@ import time
 import uuid
 
 app = FastAPI()
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins; adjust for specific origins in production
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all HTTP methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 # Load the pre-trained model
 model_path = './trained_models/logistic_regression_model.pkl'

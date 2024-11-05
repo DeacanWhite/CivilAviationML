@@ -38,28 +38,28 @@ function Home() {
   
   const handleSearch = async () => {
     try {
-      // Step 1: Submit the initial data
       const submitResponse = await axios.post("http://127.0.0.1:8000/submit", {
         airline,
         origin: departure,
         destination: arrival,
         flight_date: date,
-        planned_depart_time: plannedDepartTime.replace(":", ""), // Convert time to HHMM format without colon
+        planned_depart_time: plannedDepartTime.replace(":", ""),
       });
   
       const predictionId = submitResponse.data.id;
+      console.log("Prediction ID:", predictionId);
   
-      // Step 2: Poll the result until processing is complete
       let resultStatus = "processing";
       while (resultStatus === "processing") {
         const resultResponse = await axios.get(`http://127.0.0.1:8000/result/${predictionId}`);
         resultStatus = resultResponse.data.status;
+        console.log("Result Status:", resultStatus);
   
         if (resultStatus === "failed") {
           console.error("Data processing failed.");
           return;
         }
-        
+  
         if (resultStatus === "prediction complete") {
           setFlights([{ ...resultResponse.data.result, airline, date, plannedDepartTime }]);
           break;
@@ -71,6 +71,7 @@ function Home() {
       console.error("Error fetching flight data:", error);
     }
   };
+  
   
 
   // Mock data to simulate an API response
