@@ -203,7 +203,7 @@ function Home() {
                 </CardContent>
                 <CardContent>
                   <Typography variant="h6">Delay Probability</Typography>
-                  <Typography>{flight.delay}</Typography>
+                  <Typography>{flight.delay_prob}</Typography>
                 </CardContent>
               </Card>
             </Grid>
