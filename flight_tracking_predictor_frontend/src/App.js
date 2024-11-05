@@ -45,6 +45,8 @@ function Home() {
         flight_date: date,
         planned_depart_time: plannedDepartTime.replace(":", ""),
       });
+
+      console.log("Submit Response:", submitResponse.data); // Log the entire submit response
   
       const predictionId = submitResponse.data.id;
       console.log("Prediction ID:", predictionId);
@@ -59,11 +61,12 @@ function Home() {
           console.error("Data processing failed.");
           return;
         }
-  
-        if (resultStatus === "prediction complete") {
+        
+        if (resultStatus === "data processing complete" || resultStatus === "prediction complete") {
+          console.log("Result Data:", resultResponse.data); // Check if delay is included
           setFlights([{ ...resultResponse.data.result, airline, date, plannedDepartTime }]);
           break;
-        }
+        }      
   
         await new Promise((resolve) => setTimeout(resolve, 1000)); // Poll every second
       }
