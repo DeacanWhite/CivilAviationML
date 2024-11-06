@@ -26,6 +26,7 @@ function Home() {
   const [airline, setAirline] = useState("");
   const [plannedDepartTime, setPlannedDepartTime] = useState("");
   const [flights, setFlights] = useState([]); // Holds flight data from API response
+  
 
   // Handler functions for updating search input values
   const handleDepartureChange = (e) => setDeparture(e.target.value);
@@ -38,42 +39,48 @@ function Home() {
   
   const handleSearch = async () => {
     try {
-      const submitResponse = await axios.post("http://127.0.0.1:8000/submit", {
-        airline,
-        origin: departure,
-        destination: arrival,
-        flight_date: date,
-        planned_depart_time: plannedDepartTime.replace(":", ""),
-      });
+        const submitResponse = await axios.post("http://127.0.0.1:8000/submit", {
+            airline,
+            origin: departure,
+            destination: arrival,
+            flight_date: date,
+            planned_depart_time: plannedDepartTime.replace(":", ""),
+        });
 
-      console.log("Submit Response:", submitResponse.data); // Log the entire submit response
-  
-      const predictionId = submitResponse.data.id;
-      console.log("Prediction ID:", predictionId);
-  
-      let resultStatus = "processing";
-      while (resultStatus === "processing") {
-        const resultResponse = await axios.get(`http://127.0.0.1:8000/result/${predictionId}`);
-        resultStatus = resultResponse.data.status;
-        console.log("Result Status:", resultStatus);
-  
-        if (resultStatus === "failed") {
-          console.error("Data processing failed.");
-          return;
+        console.log("Submit Response:", submitResponse.data); // Log the entire submit response
+
+        const predictionId = submitResponse.data.id;
+        console.log("Prediction ID:", predictionId);
+
+        // Call the predict endpoint
+        const predictResponse = await axios.post(`http://127.0.0.1:8000/predict/${predictionId}`);
+        console.log("Predict Response:", predictResponse.data);
+
+        let resultStatus = "processing";
+        while (resultStatus === "processing") {
+            const resultResponse = await axios.get(`http://127.0.0.1:8000/result/${predictionId}`);
+            resultStatus = resultResponse.data.status;
+            console.log("Result Status:", resultStatus);
+
+            if (resultStatus === "failed") {
+                console.error("Data processing or prediction failed.");
+                return;
+            }
+
+            if (resultStatus === "prediction complete") {
+                console.log("Result Data:", resultResponse.data); // Check if delay is included
+                
+                setFlights([{ ...resultResponse.data.result, airline, date, plannedDepartTime, delayProbability: resultResponse.data.result.delay_probability }]);
+                break;
+            }
+
+            await new Promise((resolve) => setTimeout(resolve, 1000)); // Poll every second
         }
-        
-        if (resultStatus === "data processing complete" || resultStatus === "prediction complete") {
-          console.log("Result Data:", resultResponse.data); // Check if delay is included
-          setFlights([{ ...resultResponse.data.result, airline, date, plannedDepartTime }]);
-          break;
-        }      
-  
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // Poll every second
-      }
     } catch (error) {
-      console.error("Error fetching flight data:", error);
+        console.error("Error fetching flight data:", error);
     }
-  };
+};
+
   
   
 
@@ -203,7 +210,7 @@ function Home() {
                 </CardContent>
                 <CardContent>
                   <Typography variant="h6">Delay Probability</Typography>
-                  <Typography>{flight.delay_prob}</Typography>
+                  <Typography>{flight.delayProbability.toFixed(2)}%</Typography>
                 </CardContent>
               </Card>
             </Grid>
