@@ -81,53 +81,6 @@ function Home() {
     }
 };
 
-  
-  
-
-  // Mock data to simulate an API response
-  // Uncomment the code above to test the UI without the API
-/*
-  const handleSearch = async () => {
-      const mockResponse = {
-        flights: [
-          { airline: "Qantas", date: "20/09/2024", plannedDepartTime: "08:00", delay: "15%" },
-          { airline: "JetStar Airlines", date: "21/09/2024", plannedDepartTime: "09:30", delay: "2%" },
-          { airline: "Virgin Australia", date: "22/09/2024", plannedDepartTime: "10:15", delay: "25%" },
-          { airline: "Qantas", date: "20/09/2024", plannedDepartTime: "08:00", delay: "15%" },
-          { airline: "JetStar Airlines", date: "21/09/2024", plannedDepartTime: "09:30", delay: "2%" },
-          { airline: "Virgin Australia", date: "22/09/2024", plannedDepartTime: "10:15", delay: "25%" },
-          { airline: "Qantas", date: "20/09/2024", plannedDepartTime: "08:00", delay: "15%" },
-          { airline: "JetStar Airlines", date: "21/09/2024", plannedDepartTime: "09:30", delay: "2%" },
-          { airline: "JetStar Airlines", date: "21/09/2024", plannedDepartTime: "09:30", delay: "2%" },
-          { airline: "Qantas", date: "20/09/2024", plannedDepartTime: "08:00", delay: "15%" },
-          { airline: "JetStar Airlines", date: "21/09/2024", plannedDepartTime: "09:30", delay: "2%" },
-          { airline: "Virgin Australia", date: "22/09/2024", plannedDepartTime: "10:15", delay: "25%" },
-          { airline: "Qantas", date: "20/09/2024", plannedDepartTime: "08:00", delay: "15%" },
-          { airline: "JetStar Airlines", date: "21/09/2024", plannedDepartTime: "09:30", delay: "2%" },
-          { airline: "Virgin Australia", date: "22/09/2024", plannedDepartTime: "10:15", delay: "25%" },
-          { airline: "Qantas", date: "20/09/2024", plannedDepartTime: "08:00", delay: "15%" },
-          { airline: "JetStar Airlines", date: "21/09/2024", plannedDepartTime: "09:30", delay: "2%" },
-          { airline: "JetStar Airlines", date: "21/09/2024", plannedDepartTime: "09:30", delay: "2%" },
-          { airline: "Qantas", date: "20/09/2024", plannedDepartTime: "08:00", delay: "15%" },
-          { airline: "JetStar Airlines", date: "21/09/2024", plannedDepartTime: "09:30", delay: "2%" },
-          { airline: "Virgin Australia", date: "22/09/2024", plannedDepartTime: "10:15", delay: "25%" },
-          { airline: "Qantas", date: "20/09/2024", plannedDepartTime: "08:00", delay: "15%" },
-          { airline: "JetStar Airlines", date: "21/09/2024", plannedDepartTime: "09:30", delay: "2%" },
-          { airline: "Virgin Australia", date: "22/09/2024", plannedDepartTime: "10:15", delay: "25%" },
-          { airline: "Qantas", date: "20/09/2024", plannedDepartTime: "08:00", delay: "15%" },
-          { airline: "JetStar Airlines", date: "21/09/2024", plannedDepartTime: "09:30", delay: "2%" },
-          { airline: "JetStar Airlines", date: "21/09/2024", plannedDepartTime: "09:30", delay: "2%" },
-          { airline: "Virgin Australia", date: "22/09/2024", plannedDepartTime: "10:15", delay: "25%" }
-        ]
-      };
-
-      // Simulate an API call delay
-      setTimeout(() => {
-        setFlights(mockResponse.flights);
-      }, 1000); // 1-second delay to mimic API response time
-    };
-*/
-
   return (
     <div>
       {/* Background Section with Title */}
@@ -148,11 +101,25 @@ function Home() {
               <FormControl fullWidth sx={{ flex: 1, minWidth: "120px" }}>
                 <InputLabel>Departure</InputLabel>
                 <Select value={departure} onChange={handleDepartureChange} label="Departure" aria-label="Select departure location">
-                  <MenuItem value="LAX">LAX</MenuItem>
-                  <MenuItem value="SAV">SAV</MenuItem>
-                  <MenuItem value="Brisbane">Brisbane</MenuItem>
-                  <MenuItem value="Perth">Perth</MenuItem>
-                  <MenuItem value="Adelaide">Adelaide</MenuItem>
+                  <MenuItem value="ORD">O'Hare International Airport</MenuItem>
+                  <MenuItem value="ATL">Hartsfield-Jackson Atlanta International Airport</MenuItem>
+                  <MenuItem value="DFW">Dallas/Fort Worth International Airport</MenuItem>
+                  <MenuItem value="DEN">Denver International Airport</MenuItem>
+                  <MenuItem value="JFK">John F. Kennedy International Airport</MenuItem>
+                  <MenuItem value="SFO">San Francisco International Airport</MenuItem>
+                  <MenuItem value="SEA">Seattle-Tacoma International Airport</MenuItem>
+                  <MenuItem value="LAS">McCarran International Airport</MenuItem>
+                  <MenuItem value="MCO">Orlando International Airport</MenuItem>
+                  <MenuItem value="CLT">Charlotte Douglas International Airport</MenuItem>
+                  <MenuItem value="PHX">Phoenix Sky Harbor International Airport</MenuItem>
+                  <MenuItem value="IAH">George Bush Intercontinental Airport</MenuItem>
+                  <MenuItem value="MIA">Miami International Airport</MenuItem>
+                  <MenuItem value="BOS">Boston Logan International Airport</MenuItem>
+                  <MenuItem value="MSP">Minneapolis–Saint Paul International Airport</MenuItem>
+                  <MenuItem value="DTW">Detroit Metropolitan Airport</MenuItem>
+                  <MenuItem value="PHL">Philadelphia International Airport</MenuItem>
+                  <MenuItem value="BWI">Baltimore/Washington International Airport</MenuItem>
+                  <MenuItem value="SLC">Salt Lake City International Airport</MenuItem>
                 </Select>
               </FormControl>
 
@@ -160,11 +127,25 @@ function Home() {
               <FormControl fullWidth sx={{ flex: 1, minWidth: "120px" }}>
                 <InputLabel>Arrival</InputLabel>
                 <Select value={arrival} onChange={handleArrivalChange} label="Arrival" aria-label="Select arrival location">
-                  <MenuItem value="LAX">LAX</MenuItem>
-                  <MenuItem value="SAV">SAV</MenuItem>
-                  <MenuItem value="Brisbane">Brisbane</MenuItem>
-                  <MenuItem value="Perth">Perth</MenuItem>
-                  <MenuItem value="Adelaide">Adelaide</MenuItem>
+                  <MenuItem value="ORD">O'Hare International Airport</MenuItem>
+                  <MenuItem value="ATL">Hartsfield-Jackson Atlanta International Airport</MenuItem>
+                  <MenuItem value="DFW">Dallas/Fort Worth International Airport</MenuItem>
+                  <MenuItem value="DEN">Denver International Airport</MenuItem>
+                  <MenuItem value="JFK">John F. Kennedy International Airport</MenuItem>
+                  <MenuItem value="SFO">San Francisco International Airport</MenuItem>
+                  <MenuItem value="SEA">Seattle-Tacoma International Airport</MenuItem>
+                  <MenuItem value="LAS">McCarran International Airport</MenuItem>
+                  <MenuItem value="MCO">Orlando International Airport</MenuItem>
+                  <MenuItem value="CLT">Charlotte Douglas International Airport</MenuItem>
+                  <MenuItem value="PHX">Phoenix Sky Harbor International Airport</MenuItem>
+                  <MenuItem value="IAH">George Bush Intercontinental Airport</MenuItem>
+                  <MenuItem value="MIA">Miami International Airport</MenuItem>
+                  <MenuItem value="BOS">Boston Logan International Airport</MenuItem>
+                  <MenuItem value="MSP">Minneapolis–Saint Paul International Airport</MenuItem>
+                  <MenuItem value="DTW">Detroit Metropolitan Airport</MenuItem>
+                  <MenuItem value="PHL">Philadelphia International Airport</MenuItem>
+                  <MenuItem value="BWI">Baltimore/Washington International Airport</MenuItem>
+                  <MenuItem value="SLC">Salt Lake City International Airport</MenuItem>
                 </Select>
               </FormControl>
 
@@ -175,10 +156,26 @@ function Home() {
               <FormControl fullWidth sx={{ flex: 1, minWidth: "120px" }}>
                 <InputLabel>Airline</InputLabel>
                 <Select value={airline} onChange={handleAirlineChange} label="Airline" aria-label="Select airline">
-                  <MenuItem value="B6">B6</MenuItem>
-                  <MenuItem value="US">US</MenuItem>
-                  <MenuItem value="Virgin Australia">Virgin Australia</MenuItem>
-                  <MenuItem value="Air New Zealand">Air New Zealand</MenuItem>
+                  <MenuItem value="OO">SkyWest Airlines</MenuItem>
+                  <MenuItem value="AA">American Airlines</MenuItem>
+                  <MenuItem value="US">US Airways</MenuItem>
+                  <MenuItem value="WN">Southwest Airlines</MenuItem>
+                  <MenuItem value="DL">Delta Air Lines</MenuItem>
+                  <MenuItem value="EV">ExpressJet Airlines</MenuItem>
+                  <MenuItem value="AS">Alaska Airlines</MenuItem>
+                  <MenuItem value="VX">Virgin America</MenuItem>
+                  <MenuItem value="B6">JetBlue Airways</MenuItem>
+                  <MenuItem value="UA">United Airlines</MenuItem>
+                  <MenuItem value="F9">Frontier Airlines</MenuItem>
+                  <MenuItem value="NK">Spirit Airlines</MenuItem>
+                  <MenuItem value="G4">Allegiant Air</MenuItem>
+                  <MenuItem value="HA">Hawaiian Airlines</MenuItem>
+                  <MenuItem value="MQ">Envoy Air</MenuItem>
+                  <MenuItem value="YX">Republic Airways</MenuItem>
+                  <MenuItem value="OH">PSA Airlines</MenuItem>
+                  <MenuItem value="9E">Endeavor Air</MenuItem>
+                  <MenuItem value="CP">Compass Airlines</MenuItem>
+                  <MenuItem value="ZW">Air Wisconsin</MenuItem>
                 </Select>
               </FormControl>
 
@@ -199,7 +196,11 @@ function Home() {
         <Typography variant="h4" sx={{ marginTop: 4, textAlign: "center" }}>
           Results
         </Typography>
-        <Grid container spacing={2} sx={{ marginTop: 2 }}>
+        <Grid
+          container
+          spacing={2}
+          sx={{ marginTop: 2, justifyContent: "center", alignItems: "center" }}
+        >
           {flights.map((flight, index) => (
             <Grid item xs={12} md={6} key={index}>
               <Card variant="outlined" sx={{ display: "flex", justifyContent: "space-between" }}>
