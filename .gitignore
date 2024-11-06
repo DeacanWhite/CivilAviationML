@@ -30,7 +30,7 @@ models/
 # Experiment outputs
 experiments/
 *.log
-*.txt
+
 
 # Environment files
 .env
