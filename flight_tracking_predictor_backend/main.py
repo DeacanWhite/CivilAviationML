@@ -114,6 +114,7 @@ async def predict_delay(prediction_id: str):
         
         # Predict delay probability
         delay_prob = logistic_model.predict_proba(processed_input)[0][1]
+        delay_prob = delay_prob * 100
         
         # Store prediction result
         data_store[prediction_id]["status"] = "prediction complete"
