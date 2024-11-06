@@ -3,7 +3,7 @@ import joblib
 from datetime import datetime
 
 # Load the pre-trained model
-model_path = 'logistic_regression_model.pkl'
+model_path = 'model_files\logistic_regression_model_new.pkl'
 try:
     model = joblib.load(model_path)
     print("Model loaded successfully.")

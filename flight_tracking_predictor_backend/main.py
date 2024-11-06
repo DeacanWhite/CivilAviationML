@@ -20,7 +20,7 @@ app.add_middleware(
 )
 
 # Load the pre-trained model
-model_path = './trained_models/logistic_regression_model.pkl'
+model_path = './trained_models/logistic_regression_model_new.pkl'
 try:
     logistic_model = joblib.load(model_path)
     print("Model loaded successfully.")
@@ -70,18 +70,25 @@ async def process_data(prediction_id: str):
             'PlannedDepartTime': [raw_data['planned_depart_time']]
         }
         user_df = pd.DataFrame(user_input)
-        
+
         # Process the date and time fields
-        user_df['FlightDate'] = pd.to_datetime(user_df['FlightDate'], errors='coerce')
-        user_df['DayOfWeek'] = user_df['FlightDate'].dt.dayofweek
-        user_df['Hour'] = pd.to_datetime(user_df['PlannedDepartTime'], format='%H%M', errors='coerce').dt.hour
-        
-        # Check for invalid date or time
-        if user_df[['DayOfWeek', 'Hour']].isna().any().any():
-            data_store[prediction_id]["status"] = "failed: invalid date or time format"
+        try:
+            # Convert FlightDate to datetime and extract day of the week
+            user_df['FlightDate'] = pd.to_datetime(user_df['FlightDate'], errors='coerce')
+            user_df['DayOfWeek'] = user_df['FlightDate'].dt.dayofweek
+            
+            # Convert PlannedDepartTime to datetime and extract hour
+            user_df['Hour'] = pd.to_datetime(user_df['PlannedDepartTime'], format='%H%M', errors='coerce').dt.hour
+
+            # Check for any NaN values after conversion
+            if user_df[['DayOfWeek', 'Hour']].isna().any().any():
+                data_store[prediction_id]["status"] = "failed: invalid date or time format"
+                return
+        except Exception as e:
+            data_store[prediction_id]["status"] = f"failed: {str(e)}"
             return
-        
-        # Store processed data
+
+        # Store processed data as a list
         data_store[prediction_id]["processed_data"] = user_df[['Airline', 'Origin', 'Destination', 'DayOfWeek', 'Hour']].iloc[0].tolist()
         data_store[prediction_id]["status"] = "data processing complete"
     except Exception as e:
@@ -96,7 +103,14 @@ async def predict_delay(prediction_id: str):
         if "processed_data" not in data_store[prediction_id]:
             raise HTTPException(status_code=400, detail="Data not processed yet")
         
-        processed_input = [data_store[prediction_id]["processed_data"]]
+        # Retrieve and format the processed data
+        processed_data = data_store[prediction_id]["processed_data"]
+        
+        # Define the column names matching the model's expectations
+        processed_columns = ['Airline', 'Origin', 'Destination', 'DayOfWeek', 'Hour']
+        
+        # Ensure processed_data is in a DataFrame format with proper columns
+        processed_input = pd.DataFrame([processed_data], columns=processed_columns)
         
         # Predict delay probability
         delay_prob = logistic_model.predict_proba(processed_input)[0][1]
@@ -108,6 +122,7 @@ async def predict_delay(prediction_id: str):
         return {"status": "success", "prediction_id": prediction_id, "delay_probability": delay_prob}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Prediction failed: {str(e)}")
+
 
 @app.get("/result/{prediction_id}")
 async def get_result(prediction_id: str):
